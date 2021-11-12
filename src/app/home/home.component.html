@@ -1,9 +1,7 @@
 <div class="container">
-	<h1 class="title">
-		{{ 'PAGES.HOME.TITLE' | translate }}
-	</h1>
-	{{ocrResult}}
-	<a routerLink="/detail">{{ 'PAGES.HOME.GO_TO_DETAIL' | translate }}</a>¨
+	<h3 class="title">
+		{{ocrResult}}
+	</h3>
 	<button (click)="saveScreenshots()">Save screenshot</button>
 	<button (click)="recognizeImage()">Start text recognition</button>
 </div>
