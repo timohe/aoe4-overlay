@@ -4,6 +4,11 @@ import { electron } from 'process';
 import Tesseract from 'tesseract.js';
 import { desktopCapturer, screen  } from 'electron';
 const fs = (window as any).require('fs');
+import { remote } from 'electron';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
+import { PlayerApiResponse } from '../types';
 
 @Component({
 	selector: 'app-home',
@@ -12,8 +17,10 @@ const fs = (window as any).require('fs');
 })
 export class HomeComponent implements OnInit {
 	ocrResult = null;
+	playerName = null;
+	elo = null;
 	screenshot = null;
-	constructor(private router: Router) {
+	constructor(private router: Router, private httpClient: HttpClient) {
 	}
 	ngOnInit(): void {
 	}
@@ -44,6 +51,34 @@ export class HomeComponent implements OnInit {
 		).then(({ data: { text } }) => {
 			console.log(text);
 			this.ocrResult = text;
+			this.ocrResult = 'solaire';
+			this.getPlayerStats(this.ocrResult);
 		});
+	}
+
+	closeApp(){
+		const win = remote.getCurrentWindow();
+		win.close();
+	}
+
+
+	getPlayerStats(playerName: string) {
+		this.apiGetPlayerStats(playerName).subscribe((response) => {
+			console.log(`This is the data`);
+			this.elo = response.items[0].elo;
+			this.playerName = response.items[0].userName;
+		});
+	}
+
+	apiGetPlayerStats(playerName) {
+		return this.httpClient.post<PlayerApiResponse>(`https://api.ageofempires.com/api/ageiv/Leaderboard`, {
+			region: '7',
+			versus: 'players',
+			matchType: 'unranked',
+			teamSize: '3v3',
+			searchPlayer: playerName,
+			page: 1,
+			count: 100
+		}).pipe();
 	}
 }

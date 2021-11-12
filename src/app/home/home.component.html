@@ -1,7 +1,8 @@
 <div class="container">
 	<h3 class="title">
-		{{ocrResult}}
+		{{playerName}}:{{elo}}
 	</h3>
 	<button (click)="saveScreenshots()">Save screenshot</button>
 	<button (click)="recognizeImage()">Start text recognition</button>
+	<p id="close" (click)="closeApp()">&#10006;</p>
 </div>
