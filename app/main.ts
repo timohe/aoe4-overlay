@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -9,6 +9,24 @@ require('@electron/remote/main').initialize();
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
+
+
+
+// ipcMain.on('print-to-pdf', function (event) {
+// 	const pdfPath = path.join(os.tmpdir(), 'print.pdf')
+// 	const win = BrowserWindow.fromWebContents(event.sender)
+// 	// Use default printing options
+// 	win.webContents.printToPDF({}, function (error, data) {
+// 		if (error) throw error
+// 		fs.writeFile(pdfPath, data, function (error) {
+// 			if (error) {
+// 				throw error
+// 			}
+// 			shell.openExternal('file://' + pdfPath)
+// 			event.sender.send('wrote-pdf', pdfPath)
+// 		})
+// 	})
+// })
 
 function createWindow(): BrowserWindow {
 
