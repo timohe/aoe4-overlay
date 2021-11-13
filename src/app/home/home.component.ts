@@ -19,7 +19,7 @@ import { StaticSymbol } from '@angular/compiler';
 export class HomeComponent implements OnInit {
 	playerNamePositionXOffset = 168;
 	playerNamePositionYOffset = [288, 365, 444, 527, 602, 685];
-	playerNameWidth = 120;
+	playerNameWidth = 400;
 	playerNameHeight = 50;
 	playerStats = [];
 
@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit {
 				this.playerStats[i] = playerStat;
 			}
 		}
+		console.log(this.playerStats);
 	}
 
 	// main function to trigger all logic
@@ -47,7 +48,7 @@ export class HomeComponent implements OnInit {
 		await this.cropPictureToFile(buffer, playerNumber, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
 		const playerName = await this.recognizeTextFromBuffer(cropped);
 		const stats = await this.getPlayerStatsFromApi(playerName);
-		if (stats.count && stats.count === 1){
+		if (stats && stats.count && stats.count === 1){
 			return stats.items[0];
 		} else {
 			return null;
@@ -75,7 +76,7 @@ export class HomeComponent implements OnInit {
 	async cropPictureToFile(picture: Buffer, playerNumber: number, nameWidth: number, nameHeight: number, xOffset: number, yOffset: number) {
 		await this.native.sharp(picture)
 			.extract({ width: nameWidth, height: nameHeight, left: xOffset, top: yOffset })
-			.toFile('/Users/timo/Desktop/picture_cropped.png');
+			.toFile(`/Users/timo/Desktop/picture_cropped_${playerNumber}.png`);
 	}
 
 	async getScreenshot(): Promise<Buffer> {
