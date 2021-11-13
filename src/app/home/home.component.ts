@@ -8,7 +8,8 @@ import { remote } from 'electron';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { PlayerApiResponse } from '../types';
+import { PlayerApiResponse, PlayerStats } from '../types';
+import { StaticSymbol } from '@angular/compiler';
 
 @Component({
 	selector: 'app-home',
@@ -16,133 +17,93 @@ import { PlayerApiResponse } from '../types';
 	styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-	ocrResult = null;
-	playerName = 'undefined';
-	elo = null;
-	screenshot = null;
-	png = null;
-	croppedImage = null;
-
+	playerNamePositionXOffset = 168;
+	playerNamePositionYOffset = [288, 365, 444, 527, 602, 685];
+	playerNameWidth = 120;
+	playerNameHeight = 50;
+	playerStats = [];
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
 	}
 	ngOnInit(): void {
 	}
 
-	testRecognitionWithCropping(){
-		this.native.fs.readFile('/Users/timo/Desktop/test.png', (err, result) => {
-			if (err) { throw err; };
-			const imageBuffer = Buffer.from(result);
-			this.native.sharp(imageBuffer)
-				// crop image
-				.extract({ width: 120, height: 50, left: 168, top: 288 })
-				.toBuffer((error, data, info) => {
-					// console.log(`export info:`);
-					// console.log(info);
-					Tesseract.recognize(
-						data,
-						'eng',
-						// { logger: m => console.log(m) }
-					).then(({ data: { text } }) => {
-						console.log(text);
-						this.playerName = text;
-						this.ocrResult = text;
-						// this.ocrResult = 'solaire';
-						this.getPlayerStats(this.ocrResult);
-					});
-				})
-				.toFile('/Users/timo/Desktop/picture.png', (error2, info) => {
-					console.log(error2);
-				});
-		});
+	async getStatsForAll(){
+		for (let i = 0; i < this.playerNamePositionYOffset.length; i++) {
+			const playerStat = await this.getStatsFromScreenshotForOne(i);
+			if (playerStat){
+				this.playerStats[i] = playerStat;
+			}
+		}
 	}
 
+	// main function to trigger all logic
+	async getStatsFromScreenshotForOne(playerNumber: number): Promise<PlayerStats> {
+		//TODO: replace this with the screenshot function
+		const buffer = await this.getBufferFromLocalFile();
+		// eslint-disable-next-line max-len
+		const cropped = await this.cropPicture(buffer, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
+		// eslint-disable-next-line max-len
+		await this.cropPictureToFile(buffer, playerNumber, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
+		const playerName = await this.recognizeTextFromBuffer(cropped);
+		const stats = await this.getPlayerStatsFromApi(playerName);
+		if (stats.count && stats.count === 1){
+			return stats.items[0];
+		} else {
+			return null;
+		}
+	}
 
-	testEditpicture() {
-		this.native.fs.readFile('/Users/timo/Desktop/input.png', (err, data) => {
-			if (err) { throw err; };
-			const imageBuffer = Buffer.from(data);
-			this.native.sharp(imageBuffer)
-				.extractChannel('green')
-				.toFile('/Users/timo/Desktop/output.png', (error: any, info) => {
-					console.log(error);
-				});
-		});
-	};
+	async getBufferFromLocalFile(): Promise<Buffer> {
+		const result = await this.native.fs.promises.readFile('/Users/timo/Desktop/test.png');
+		return Buffer.from(result);
+	}
 
-	testRecognition() {
-		this.native.fs.readFile('/Users/timo/Desktop/test.png', (err, data) => {
-			if (err) { throw err; };
-			const imageBuffer = Buffer.from(data);
-			Tesseract.recognize(
-				imageBuffer,
-				'eng',
-				{ logger: m => console.log(m) }
-			).then(({ data: { text } }) => {
-				console.log(text);
-			});
-		});
-	};
+	async recognizeTextFromBuffer(picture: Buffer): Promise<string> {
+		const text = await Tesseract.recognize(picture, 'eng');
+		return text.data.text;
+	}
 
-	saveScreenshotsAndRecognize() {
-		desktopCapturer.getSources({
+	async cropPicture(picture: Buffer, nameWidth: number, nameHeight: number, xOffset: number, yOffset: number) {
+		const cropped = await this.native.sharp(picture)
+			.extract({ width: nameWidth, height: nameHeight, left: xOffset, top: yOffset })
+			.toBuffer();
+		return cropped;
+	}
+
+	// eslint-disable-next-line max-len
+	async cropPictureToFile(picture: Buffer, playerNumber: number, nameWidth: number, nameHeight: number, xOffset: number, yOffset: number) {
+		await this.native.sharp(picture)
+			.extract({ width: nameWidth, height: nameHeight, left: xOffset, top: yOffset })
+			.toFile('/Users/timo/Desktop/picture_cropped.png');
+	}
+
+	async getScreenshot(): Promise<Buffer> {
+		const sources = await desktopCapturer.getSources({
 			types: ['screen'], thumbnailSize: {
 				width: 2560,
 				height: 1440,
 			}
-		})
-			.then(sources => {
-				this.screenshot = sources[0].thumbnail.toPNG(); // The image to display the screenshot
-				const imageBuffer = Buffer.from(this.screenshot);
-				this.native.sharp(imageBuffer)
-					// crop image
-					.extract({ width: 400, height: 200, left: 0, top: 170 })
-					.toBuffer((err, data, info) => {
-						// console.log(`export info:`);
-						// console.log(info);
-						Tesseract.recognize(
-							data,
-							'eng',
-							// { logger: m => console.log(m) }
-						).then(({ data: { text } }) => {
-							console.log(text);
-							this.playerName = text;
-							this.ocrResult = text;
-							// this.ocrResult = 'solaire';
-							this.getPlayerStats(this.ocrResult);
-						});
-					})
-					.toFile('/Users/timo/Desktop/picture.png', (err, info) => {
-						// console.log(`Picture saved`);
-					});
-			});
-	}
-
-	closeApp() {
-		const win = remote.getCurrentWindow();
-		win.close();
-	}
-
-
-	getPlayerStats(playerName: string) {
-		this.apiGetPlayerStats(playerName).subscribe((response) => {
-			console.log(`Feedback from API`);
-			console.log(response.items[0].elo);
-			console.log(response.items[0].userName);
-			this.elo = response.items[0].elo;
-			this.playerName = response.items[0].userName;
 		});
+		const screenshot = sources[0].thumbnail.toPNG();
+		return Buffer.from(screenshot);
 	}
 
-	apiGetPlayerStats(playerName) {
+	async getPlayerStatsFromApi(playerName: string) {
+		const trimmedPlayerName = playerName.trim();
 		return this.httpClient.post<PlayerApiResponse>(`https://api.ageofempires.com/api/ageiv/Leaderboard`, {
 			region: '7',
 			versus: 'players',
 			matchType: 'unranked',
 			teamSize: '3v3',
-			searchPlayer: 'solaire',
+			searchPlayer: trimmedPlayerName,
 			page: 1,
 			count: 100
-		}).pipe();
+		}).toPromise();
+	}
+
+	closeApp() {
+		const win = remote.getCurrentWindow();
+		win.close();
 	}
 }

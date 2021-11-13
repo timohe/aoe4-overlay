@@ -1,5 +1,5 @@
 export interface PlayerApiResponse {
-	count: 1;
+	count: number;
 	items: Array<PlayerStats>;
 }
 
