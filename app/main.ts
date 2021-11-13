@@ -36,7 +36,7 @@ function createWindow(): BrowserWindow {
       enableRemoteModule : true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
     },
 	// transparent: true,
-	alwaysOnTop: true
+	// alwaysOnTop: true
   });
 
 

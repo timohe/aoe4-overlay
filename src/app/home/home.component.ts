@@ -29,6 +29,61 @@ export class HomeComponent implements OnInit {
 	ngOnInit(): void {
 	}
 
+	testRecognitionWithCropping(){
+		this.native.fs.readFile('/Users/timo/Desktop/test.png', (err, result) => {
+			if (err) { throw err; };
+			const imageBuffer = Buffer.from(result);
+			this.native.sharp(imageBuffer)
+				// crop image
+				.extract({ width: 120, height: 50, left: 168, top: 288 })
+				.toBuffer((error, data, info) => {
+					// console.log(`export info:`);
+					// console.log(info);
+					Tesseract.recognize(
+						data,
+						'eng',
+						// { logger: m => console.log(m) }
+					).then(({ data: { text } }) => {
+						console.log(text);
+						this.playerName = text;
+						this.ocrResult = text;
+						// this.ocrResult = 'solaire';
+						this.getPlayerStats(this.ocrResult);
+					});
+				})
+				.toFile('/Users/timo/Desktop/picture.png', (error2, info) => {
+					console.log(error2);
+				});
+		});
+	}
+
+
+	testEditpicture() {
+		this.native.fs.readFile('/Users/timo/Desktop/input.png', (err, data) => {
+			if (err) { throw err; };
+			const imageBuffer = Buffer.from(data);
+			this.native.sharp(imageBuffer)
+				.extractChannel('green')
+				.toFile('/Users/timo/Desktop/output.png', (error: any, info) => {
+					console.log(error);
+				});
+		});
+	};
+
+	testRecognition() {
+		this.native.fs.readFile('/Users/timo/Desktop/test.png', (err, data) => {
+			if (err) { throw err; };
+			const imageBuffer = Buffer.from(data);
+			Tesseract.recognize(
+				imageBuffer,
+				'eng',
+				{ logger: m => console.log(m) }
+			).then(({ data: { text } }) => {
+				console.log(text);
+			});
+		});
+	};
+
 	saveScreenshotsAndRecognize() {
 		desktopCapturer.getSources({
 			types: ['screen'], thumbnailSize: {
