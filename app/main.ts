@@ -28,6 +28,7 @@ function createWindow(): BrowserWindow {
 	maxWidth: 800,
 	frame: false,
 	autoHideMenuBar: true,
+	backgroundColor: '#191c29',
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
