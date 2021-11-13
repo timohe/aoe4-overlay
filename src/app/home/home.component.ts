@@ -10,8 +10,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { PlayerApiResponse } from '../types';
 
-// https://jsfiddle.net/f3u0rk79/1/
-
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
