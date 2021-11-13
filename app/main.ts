@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -11,23 +11,6 @@ const args = process.argv.slice(1),
   serve = args.some(val => val === '--serve');
 
 
-
-// ipcMain.on('print-to-pdf', function (event) {
-// 	const pdfPath = path.join(os.tmpdir(), 'print.pdf')
-// 	const win = BrowserWindow.fromWebContents(event.sender)
-// 	// Use default printing options
-// 	win.webContents.printToPDF({}, function (error, data) {
-// 		if (error) throw error
-// 		fs.writeFile(pdfPath, data, function (error) {
-// 			if (error) {
-// 				throw error
-// 			}
-// 			shell.openExternal('file://' + pdfPath)
-// 			event.sender.send('wrote-pdf', pdfPath)
-// 		})
-// 	})
-// })
-
 function createWindow(): BrowserWindow {
 
   const electronScreen = screen;
@@ -35,12 +18,14 @@ function createWindow(): BrowserWindow {
 
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
+    x: size.width-800,
     y: 0,
-    width: 400,
+    width: 800,
     height: 400,
-	maxHeight: 400, minHeight: 400,
-	minWidth: 400, maxWidth: 400,
+	minHeight: 400, 
+	maxHeight: 400,
+	minWidth: 800, 
+	maxWidth: 800,
 	frame: false,
 	autoHideMenuBar: true,
     webPreferences: {
@@ -49,7 +34,7 @@ function createWindow(): BrowserWindow {
       contextIsolation: false,  // false if you want to run e2e test with Spectron
       enableRemoteModule : true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
     },
-	transparent: true,
+	// transparent: true,
 	alwaysOnTop: true
   });
 
