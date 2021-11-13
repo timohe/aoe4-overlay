@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { electron } from 'process';
 import Tesseract from 'tesseract.js';
 import { desktopCapturer, screen } from 'electron';
-const fs = (window as any).require('fs');
-const sharp = (window as any).require('sharp');
+import { ElectronService } from '../core/services/index';
 import { remote } from 'electron';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -25,7 +24,7 @@ export class HomeComponent implements OnInit {
 	croppedImage = null;
 
 
-	constructor(private router: Router, private httpClient: HttpClient) {
+	constructor(private router: Router, private httpClient: HttpClient, private native: ElectronService) {
 	}
 	ngOnInit(): void {
 	}
@@ -40,7 +39,7 @@ export class HomeComponent implements OnInit {
 			.then(sources => {
 				this.screenshot = sources[0].thumbnail.toPNG(); // The image to display the screenshot
 				const imageBuffer = Buffer.from(this.screenshot);
-				sharp(imageBuffer)
+				this.native.sharp(imageBuffer)
 					// crop image
 					.extract({ width: 400, height: 200, left: 0, top: 170 })
 					.toBuffer((err, data, info) => {

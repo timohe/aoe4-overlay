@@ -50,6 +50,7 @@
 		"@angular/platform-browser-dynamic": "12.1.2",
 		"@angular/router": "12.1.2",
 		"@electron/remote": "1.2.0",
+		"@types/sharp": "0.29.3",
 		"path": "0.12.7",
 		"rxjs": "~6.6.0",
 		"sharp": "0.29.2",
