@@ -49,7 +49,7 @@ export class HomeComponent implements OnInit {
 						Tesseract.recognize(
 							data,
 							'eng',
-							{ logger: m => console.log(m) }
+							// { logger: m => console.log(m) }
 						).then(({ data: { text } }) => {
 							console.log(text);
 							this.playerName = text;
@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
 						});
 					})
 					.toFile('/Users/timo/Desktop/picture.png', (err, info) => {
-						console.log(`Picture saved`);
+						// console.log(`Picture saved`);
 					});
 			});
 	}
@@ -72,7 +72,9 @@ export class HomeComponent implements OnInit {
 
 	getPlayerStats(playerName: string) {
 		this.apiGetPlayerStats(playerName).subscribe((response) => {
-			console.log(`This is the data`);
+			console.log(`Feedback from API`);
+			console.log(response.items[0].elo);
+			console.log(response.items[0].userName);
 			this.elo = response.items[0].elo;
 			this.playerName = response.items[0].userName;
 		});
