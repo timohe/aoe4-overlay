@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@electron/remote": "1.2.0",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "sharp": "^0.29.2"
   }
 }
