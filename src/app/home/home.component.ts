@@ -30,26 +30,6 @@ export class HomeComponent implements OnInit {
 	ngOnInit(): void {
 	}
 
-
-	testCropImage() {
-		desktopCapturer.getSources({
-			types: ['screen'], thumbnailSize: {
-				width: 2560,
-				height: 1440,
-			}
-		})
-			.then(sources => {
-				this.screenshot = sources[0].thumbnail.toPNG(); // The image to display the screenshot
-				const imageBuffer = Buffer.from(this.screenshot);
-				sharp(imageBuffer)
-					.resize(200)
-					.toFile('/Users/timo/Desktop/picture.png', (err, info) => {
-						console.log(`This is the data`);
-					});
-			});
-	}
-
-
 	saveScreenshotsAndRecognize() {
 		desktopCapturer.getSources({
 			types: ['screen'], thumbnailSize: {
@@ -60,24 +40,29 @@ export class HomeComponent implements OnInit {
 			.then(sources => {
 				this.screenshot = sources[0].thumbnail.toPNG(); // The image to display the screenshot
 				const imageBuffer = Buffer.from(this.screenshot);
-				Tesseract.recognize(
-					imageBuffer,
-					'eng',
-					{ logger: m => console.log(m) }
-				).then(({ data: { text } }) => {
-					console.log(text);
-					// this.playerName = text;
-					// this.ocrResult = text;
-					// this.ocrResult = 'solaire';
-					// this.getPlayerStats(this.ocrResult);
-				});
+				sharp(imageBuffer)
+					// crop image
+					.extract({ width: 400, height: 200, left: 0, top: 170 })
+					.toBuffer((err, data, info) => {
+						// console.log(`export info:`);
+						// console.log(info);
+						Tesseract.recognize(
+							data,
+							'eng',
+							{ logger: m => console.log(m) }
+						).then(({ data: { text } }) => {
+							console.log(text);
+							this.playerName = text;
+							this.ocrResult = text;
+							// this.ocrResult = 'solaire';
+							this.getPlayerStats(this.ocrResult);
+						});
+					})
+					.toFile('/Users/timo/Desktop/picture.png', (err, info) => {
+						console.log(`Picture saved`);
+					});
 			});
 	}
-	// recognizeImage() {
-	// 	fs.readFile('/Users/timo/Desktop/picture.png', function(err, data) {
-	// 		if (err) {throw err;};
-	// 	});
-	// }
 
 	closeApp() {
 		const win = remote.getCurrentWindow();
@@ -99,7 +84,7 @@ export class HomeComponent implements OnInit {
 			versus: 'players',
 			matchType: 'unranked',
 			teamSize: '3v3',
-			searchPlayer: playerName,
+			searchPlayer: 'solaire',
 			page: 1,
 			count: 100
 		}).pipe();
