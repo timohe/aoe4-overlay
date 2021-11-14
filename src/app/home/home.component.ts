@@ -21,7 +21,8 @@ export class HomeComponent implements OnInit {
 	playerNamePositionYOffset = [288, 365, 444, 527, 602, 685];
 	playerNameWidth = 400;
 	playerNameHeight = 50;
-	playerStats = [];
+	playerStats: Array<PlayerStats> = [];
+	calcInProgress = false;
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
 	}
@@ -29,12 +30,15 @@ export class HomeComponent implements OnInit {
 	}
 
 	async getStatsForAll(){
+		this.playerStats = [];
+		this.calcInProgress = true;
 		for (let i = 0; i < this.playerNamePositionYOffset.length; i++) {
 			const playerStat = await this.getStatsFromScreenshotForOne(i);
 			if (playerStat){
 				this.playerStats[i] = playerStat;
 			}
 		}
+		this.calcInProgress = false;
 		console.log(this.playerStats);
 	}
 
@@ -46,7 +50,8 @@ export class HomeComponent implements OnInit {
 		const cropped = await this.cropPicture(buffer, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
 		// eslint-disable-next-line max-len
 		await this.cropPictureToFile(buffer, playerNumber, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
-		const playerName = await this.recognizeTextFromBuffer(cropped);
+		const improved = await this.improveImage(cropped);
+		const playerName = await this.recognizeTextFromBuffer(improved);
 		const stats = await this.getPlayerStatsFromApi(playerName);
 		if (stats && stats.count && stats.count === 1){
 			return stats.items[0];
@@ -67,6 +72,21 @@ export class HomeComponent implements OnInit {
 			.blur(0.8)
 			.toBuffer();
 		return blurred;
+	}
+
+	async improveImage(picture: Buffer) {
+		const greyscale = await this.native.sharp(picture)
+			.greyscale()
+			.resize({
+				width: 1000,
+				kernel: this.native.sharp.kernel.cubic,
+				fit: 'cover',
+			})
+			.sharpen(3, 10, 2)
+			.threshold(100)
+			.blur(1)
+			.toBuffer();
+		return greyscale;
 	}
 
 	async getBufferFromLocalFile(): Promise<Buffer> {

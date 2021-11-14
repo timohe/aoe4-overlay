@@ -5,6 +5,11 @@ Overlay for Age of Empires 4
 - Does OCR
 - Shows the result in the loading screen
 
+# Todos
+* Windows build
+* Recognition retry mechanism
+* Recognize and show map
+
 ## Main Dependencies
 * Angular
 * Electron
