@@ -6,5 +6,6 @@
 			{{stat?.userName}} || elo: {{stat?.elo}} || %: {{stat?.winPercent}}
 		</p>
 	</div>
+	<button  (click)="toggleFakeInput()">Fake Input: {{fakeInput}}</button>
 	<button [disabled]="calcInProgress" (click)="getStatsForAll()">Start</button>
 </div>

@@ -150,4 +150,8 @@ export class HomeComponent implements OnInit {
 		const win = remote.getCurrentWindow();
 		win.close();
 	}
+
+	toggleFakeInput() {
+		this.fakeInput= !this.fakeInput;
+	}
 }
