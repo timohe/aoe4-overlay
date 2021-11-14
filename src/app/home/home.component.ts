@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
 		this.playerStats = [];
 		this.calcInProgress = true;
 		for (let i = 0; i < this.nameYOffset.length; i++) {
-			const playerStat = await this.getStatsFromScreenshotForOne(i, true, true);
+			const playerStat = await this.getStatsFromScreenshotForOne(i, this.fakeInput, true);
 			if (playerStat){
 				this.playerStats[i] = playerStat;
 			}
@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit {
 		if (enhanceImage){
 			cropped = await this.improveImage(cropped);
 		}
-		await this.savePicture(cropped, playerNumber);
+		// await this.savePicture(cropped, playerNumber);
 		const playerName = await this.recognizeTextFromBuffer(cropped);
 		let stats = await this.getPlayerStatsFromApi(playerName, '3v3');
 		if (stats && stats.count && stats.count === 1){
@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	async getBufferFromLocalFile(): Promise<Buffer> {
-		const result = await this.native.fs.promises.readFile('/Users/timo/Desktop/test.png');
+		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/test.png');
 		return Buffer.from(result);
 	}
 
@@ -117,7 +117,7 @@ export class HomeComponent implements OnInit {
 	// eslint-disable-next-line max-len
 	async savePicture(picture: Buffer, playerNumber: number) {
 		await this.native.sharp(picture)
-			.toFile(`/Users/timo/Desktop/picture_cropped_${playerNumber}.png`);
+			.toFile(`./src/assets/test-screenshot/picture_cropped_${playerNumber}.png`);
 	}
 
 
