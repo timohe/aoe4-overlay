@@ -19,3 +19,11 @@ export interface PlayerStats {
 	losses: number;
 	winStreak: number;
 }
+
+export enum GameMode {
+	vs1 = '1v1',
+	vs2 = '2v2',
+	vs3 = '3v3',
+	vs4 = '4v4',
+}
+
