@@ -32,21 +32,31 @@ export class HomeComponent implements OnInit {
 
 	// main function to trigger all logic
 	async getStatsForAll(){
-		let playerNames = [];
+		const playerNames = [];
 		this.playerStats = [];
 		this.calcInProgress = true;
 		for (let i = 0; i < this.nameYOffset.length; i++) {
 			const playerName = await this.getPlayerNameFromScreenshot(i, this.fakeInput, true);
-			// TODO: what if nothing returns
 			playerNames.push(playerName);
 		}
-		// TODO: check for length and apply game mode
-		const playerStat = await this.getStatsFromName(playerName, GameMode.vs3);
-		if (playerStat) {
-			this.playerStats[i] = playerStat;
+		const nrPlayers = playerNames.filter(Boolean).length;
+		if (nrPlayers > 6){
+			playerNames.forEach(async name => {
+				const playerStat = await this.getStatsFromName(name, GameMode.vs4);
+			});
+		} else if (nrPlayers > 4){
+			playerNames.forEach(async name => {
+				const playerStat = await this.getStatsFromName(name, GameMode.vs3);
+			});
+		} else if (nrPlayers > 2) {
+			playerNames.forEach(async name => {
+				const playerStat = await this.getStatsFromName(name, GameMode.vs2);
+			});
+		} else {
+			playerNames.forEach(async name => {
+				const playerStat = await this.getStatsFromName(name, GameMode.vs1);
+			});
 		}
-
-
 		this.calcInProgress = false;
 		console.log(this.playerStats);
 	}
