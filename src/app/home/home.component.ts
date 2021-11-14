@@ -55,6 +55,20 @@ export class HomeComponent implements OnInit {
 		}
 	}
 
+	async greyscaleImage(picture: Buffer){
+		const greyscale = await this.native.sharp(picture)
+			.greyscale()
+			.toBuffer();
+		return greyscale;
+	}
+
+	async blurImage(picture: Buffer) {
+		const blurred = await this.native.sharp(picture)
+			.blur(0.8)
+			.toBuffer();
+		return blurred;
+	}
+
 	async getBufferFromLocalFile(): Promise<Buffer> {
 		const result = await this.native.fs.promises.readFile('/Users/timo/Desktop/test.png');
 		return Buffer.from(result);
