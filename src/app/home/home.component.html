@@ -3,7 +3,7 @@
 	<h1>Player info</h1>
 	<div *ngFor="let stat of playerStats">
 		<p *ngIf="stat">
-			{{stat?.userName}} || elo: {{stat?.elo}} || %: {{stat?.winPercent}}
+			{{stat?.userName}} | Elo: {{stat?.elo}} | Winrate: {{stat?.winPercent}}%
 		</p>
 	</div>
 	<button  (click)="toggleFakeInput()">Fake Input: {{fakeInput}}</button>

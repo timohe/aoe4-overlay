@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, screen, globalShortcut } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
@@ -23,12 +23,12 @@ function createWindow(): BrowserWindow {
 		icon: path.join(__dirname, iconPath),
 		x: size.width - 400,
 		y: 0,
-		width: 400,
-		height: 400,
-		minHeight: 400,
-		maxHeight: 400,
-		minWidth: 400,
-		maxWidth: 400,
+		// width: 400,
+		// height: 400,
+		// minHeight: 400,
+		// maxHeight: 400,
+		// minWidth: 400,
+		// maxWidth: 400,
 		frame: false,
 		autoHideMenuBar: true,
 		backgroundColor: '#191c29',
@@ -81,7 +81,20 @@ try {
 	// initialization and is ready to create browser windows.
 	// Some APIs can only be used after this event occurs.
 	// Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-	app.on('ready', () => setTimeout(createWindow, 400));
+	app.on('ready', () => {
+		setTimeout(createWindow, 400);
+		const ret = globalShortcut.register('CommandOrControl+Shift+X', () => {
+			console.log('show app')
+			app.show()
+		})
+		const ret2 = globalShortcut.register('CommandOrControl+Shift+Y', () => {
+			console.log('hide app')
+			app.hide()
+		})
+		if (!ret) {
+			console.log('registration failed')
+		}
+	});
 
 	// Quit when all windows are closed.
 	app.on('window-all-closed', () => {
@@ -104,3 +117,14 @@ try {
 	// Catch Error
 	// throw e;
 }
+
+
+
+
+app.on('will-quit', () => {
+	// Unregister a shortcut.
+	globalShortcut.unregister('CommandOrControl+X')
+
+	// Unregister all shortcuts.
+	globalShortcut.unregisterAll()
+})

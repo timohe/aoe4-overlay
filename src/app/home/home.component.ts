@@ -41,21 +41,21 @@ export class HomeComponent implements OnInit {
 		}
 		const nrPlayers = playerNames.filter(Boolean).length;
 		if (nrPlayers > 6){
-			playerNames.forEach(async name => {
-				const playerStat = await this.getStatsFromName(name, GameMode.vs4);
-			});
+			for (const name of playerNames) {
+				this.playerStats.push(await this.getStatsFromName(name, GameMode.vs4));
+			}
 		} else if (nrPlayers > 4){
-			playerNames.forEach(async name => {
-				const playerStat = await this.getStatsFromName(name, GameMode.vs3);
-			});
+			for (const name of playerNames) {
+				this.playerStats.push(await this.getStatsFromName(name, GameMode.vs3));
+			};
 		} else if (nrPlayers > 2) {
-			playerNames.forEach(async name => {
-				const playerStat = await this.getStatsFromName(name, GameMode.vs2);
-			});
+			for (const name of playerNames) {
+				this.playerStats.push(await this.getStatsFromName(name, GameMode.vs2));
+			};
 		} else {
-			playerNames.forEach(async name => {
-				const playerStat = await this.getStatsFromName(name, GameMode.vs1);
-			});
+			for (const name of playerNames) {
+				this.playerStats.push(await this.getStatsFromName(name, GameMode.vs1));
+			};
 		}
 		this.calcInProgress = false;
 		console.log(this.playerStats);
@@ -130,8 +130,6 @@ export class HomeComponent implements OnInit {
 
 	async recognizeTextFromBuffer(picture: Buffer): Promise<string> {
 		const text = await Tesseract.recognize(picture, 'eng');
-		console.log(`Recognized player:`);
-		console.log(text.data.text);
 		return text.data.text;
 	}
 
@@ -161,6 +159,9 @@ export class HomeComponent implements OnInit {
 
 	async getPlayerStatsFromApi(playerName: string, mode: string) {
 		const trimmedPlayerName = playerName.trim();
+		if (playerName === ''){
+			return;
+		}
 		return this.httpClient.post<PlayerApiResponse>(`https://api.ageofempires.com/api/ageiv/Leaderboard`, {
 			region: '7',
 			versus: 'players',

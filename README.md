@@ -6,10 +6,11 @@ Overlay for Age of Empires 4
 - Shows the result in the loading screen
 
 # Todos
-* Windows build
-* API calls based on different team sizes 1v1, 2v2, 3v3
-* Recognition retry mechanism (if needed)
+* Change Icons
+* Put data alongside names
+* Shortcut to show/hide
 * Recognize and show map
+* app.on('ready', () => setTimeout(createWindow, 400)); can prob be reduced
 
 ## Main Dependencies
 * Angular
