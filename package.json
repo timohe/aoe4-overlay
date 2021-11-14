@@ -1,6 +1,6 @@
 {
 	"name": "aoe4_overlay",
-	"version": "10.1.0",
+	"version": "0.0.1",
 	"description": "Overlay for Age of Empires 4",
 	"homepage": "https://github.com/maximegris/angular-electron",
 	"author": {
@@ -8,6 +8,7 @@
 		"email": "t.hegnauer+aoe@gmail.com"
 	},
 	"keywords": [
+		"aoe4",
 		"angular",
 		"angular 12",
 		"electron",
