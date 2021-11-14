@@ -32,15 +32,21 @@ export class HomeComponent implements OnInit {
 
 	// main function to trigger all logic
 	async getStatsForAll(){
+		let playerNames = [];
 		this.playerStats = [];
 		this.calcInProgress = true;
 		for (let i = 0; i < this.nameYOffset.length; i++) {
 			const playerName = await this.getPlayerNameFromScreenshot(i, this.fakeInput, true);
-			const playerStat = await this.getStatsFromName(playerName, GameMode.vs3);
-			if (playerStat){
-				this.playerStats[i] = playerStat;
-			}
+			// TODO: what if nothing returns
+			playerNames.push(playerName);
 		}
+		// TODO: check for length and apply game mode
+		const playerStat = await this.getStatsFromName(playerName, GameMode.vs3);
+		if (playerStat) {
+			this.playerStats[i] = playerStat;
+		}
+
+
 		this.calcInProgress = false;
 		console.log(this.playerStats);
 	}
@@ -131,8 +137,6 @@ export class HomeComponent implements OnInit {
 		await this.native.sharp(picture)
 			.toFile(`./src/assets/test-screenshot/picture_cropped_${playerNumber}.png`);
 	}
-
-
 
 	async getScreenshot(): Promise<Buffer> {
 		const sources = await desktopCapturer.getSources({
