@@ -7,7 +7,8 @@ Overlay for Age of Empires 4
 
 # Todos
 * Windows build
-* Recognition retry mechanism
+* API calls based on different team sizes 1v1, 2v2, 3v3
+* Recognition retry mechanism (if needed)
 * Recognize and show map
 
 ## Main Dependencies

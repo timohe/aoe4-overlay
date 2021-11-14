@@ -58,11 +58,17 @@ export class HomeComponent implements OnInit {
 		}
 		await this.savePicture(cropped, playerNumber);
 		const playerName = await this.recognizeTextFromBuffer(cropped);
-		const stats = await this.getPlayerStatsFromApi(playerName);
+		let stats = await this.getPlayerStatsFromApi(playerName, '3v3');
 		if (stats && stats.count && stats.count === 1){
 			return stats.items[0];
-		} else {
-			return null;
+		}
+		stats = await this.getPlayerStatsFromApi(playerName, '2v2');
+		if (stats && stats.count && stats.count === 1) {
+			return stats.items[0];
+		}
+		stats = await this.getPlayerStatsFromApi(playerName, '1v1');
+		if (stats && stats.count && stats.count === 1) {
+			return stats.items[0];
 		}
 	}
 
@@ -127,13 +133,13 @@ export class HomeComponent implements OnInit {
 		return Buffer.from(screenshot);
 	}
 
-	async getPlayerStatsFromApi(playerName: string) {
+	async getPlayerStatsFromApi(playerName: string, mode: string) {
 		const trimmedPlayerName = playerName.trim();
 		return this.httpClient.post<PlayerApiResponse>(`https://api.ageofempires.com/api/ageiv/Leaderboard`, {
 			region: '7',
 			versus: 'players',
 			matchType: 'unranked',
-			teamSize: '3v3',
+			teamSize: mode,
 			searchPlayer: trimmedPlayerName,
 			page: 1,
 			count: 100
