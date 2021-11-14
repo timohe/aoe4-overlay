@@ -17,12 +17,13 @@ import { StaticSymbol } from '@angular/compiler';
 	styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-	playerNamePositionXOffset = 168;
-	playerNamePositionYOffset = [288, 365, 444, 527, 602, 685];
-	playerNameWidth = 400;
-	playerNameHeight = 50;
+	nameXOffset = 168;
+	nameYOffset = [288, 365, 444, 527, 602, 685];
+	nameWidth = 400;
+	nameHeight = 50;
 	playerStats: Array<PlayerStats> = [];
 	calcInProgress = false;
+	fakeInput = true;
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
 	}
@@ -32,8 +33,8 @@ export class HomeComponent implements OnInit {
 	async getStatsForAll(){
 		this.playerStats = [];
 		this.calcInProgress = true;
-		for (let i = 0; i < this.playerNamePositionYOffset.length; i++) {
-			const playerStat = await this.getStatsFromScreenshotForOne(i);
+		for (let i = 0; i < this.nameYOffset.length; i++) {
+			const playerStat = await this.getStatsFromScreenshotForOne(i, true, true);
 			if (playerStat){
 				this.playerStats[i] = playerStat;
 			}
@@ -43,15 +44,20 @@ export class HomeComponent implements OnInit {
 	}
 
 	// main function to trigger all logic
-	async getStatsFromScreenshotForOne(playerNumber: number): Promise<PlayerStats> {
-		//TODO: replace this with the screenshot function
-		const buffer = await this.getBufferFromLocalFile();
+	async getStatsFromScreenshotForOne(playerNumber: number, fakeInput: boolean, enhanceImage: boolean): Promise<PlayerStats> {
+		let buffer = null;
+		if (fakeInput){
+			buffer = await this.getBufferFromLocalFile();
+		} else {
+			buffer = await this.getScreenshot();
+		}
+		let cropped = await this.cropPicture(buffer, this.nameWidth, this.nameHeight, this.nameXOffset, this.nameYOffset[playerNumber]);
 		// eslint-disable-next-line max-len
-		const cropped = await this.cropPicture(buffer, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
-		// eslint-disable-next-line max-len
-		await this.cropPictureToFile(buffer, playerNumber, this.playerNameWidth, this.playerNameHeight, this.playerNamePositionXOffset, this.playerNamePositionYOffset[playerNumber]);
-		const improved = await this.improveImage(cropped);
-		const playerName = await this.recognizeTextFromBuffer(improved);
+		if (enhanceImage){
+			cropped = await this.improveImage(cropped);
+		}
+		await this.savePicture(cropped, playerNumber);
+		const playerName = await this.recognizeTextFromBuffer(cropped);
 		const stats = await this.getPlayerStatsFromApi(playerName);
 		if (stats && stats.count && stats.count === 1){
 			return stats.items[0];
@@ -76,15 +82,9 @@ export class HomeComponent implements OnInit {
 
 	async improveImage(picture: Buffer) {
 		const greyscale = await this.native.sharp(picture)
-			.greyscale()
-			.resize({
-				width: 1000,
-				kernel: this.native.sharp.kernel.cubic,
-				fit: 'cover',
-			})
-			.sharpen(3, 10, 2)
 			.threshold(100)
-			.blur(1)
+			.negate({ alpha: false })
+			.blur(0.5)
 			.toBuffer();
 		return greyscale;
 	}
@@ -96,6 +96,8 @@ export class HomeComponent implements OnInit {
 
 	async recognizeTextFromBuffer(picture: Buffer): Promise<string> {
 		const text = await Tesseract.recognize(picture, 'eng');
+		console.log(`Recognized text:`);
+		console.log(text.data.text);
 		return text.data.text;
 	}
 
@@ -107,11 +109,12 @@ export class HomeComponent implements OnInit {
 	}
 
 	// eslint-disable-next-line max-len
-	async cropPictureToFile(picture: Buffer, playerNumber: number, nameWidth: number, nameHeight: number, xOffset: number, yOffset: number) {
+	async savePicture(picture: Buffer, playerNumber: number) {
 		await this.native.sharp(picture)
-			.extract({ width: nameWidth, height: nameHeight, left: xOffset, top: yOffset })
 			.toFile(`/Users/timo/Desktop/picture_cropped_${playerNumber}.png`);
 	}
+
+
 
 	async getScreenshot(): Promise<Buffer> {
 		const sources = await desktopCapturer.getSources({
