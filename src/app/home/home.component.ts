@@ -8,7 +8,7 @@ import { remote } from 'electron';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
-import { PlayerApiResponse, PlayerStats } from '../types';
+import { PlayerApiResponse, PlayerStats, GameMode } from '../types';
 import { StaticSymbol } from '@angular/compiler';
 
 @Component({
@@ -30,11 +30,13 @@ export class HomeComponent implements OnInit {
 	ngOnInit(): void {
 	}
 
+	// main function to trigger all logic
 	async getStatsForAll(){
 		this.playerStats = [];
 		this.calcInProgress = true;
 		for (let i = 0; i < this.nameYOffset.length; i++) {
-			const playerStat = await this.getStatsFromScreenshotForOne(i, this.fakeInput, true);
+			const playerName = await this.getPlayerNameFromScreenshot(i, this.fakeInput, true);
+			const playerStat = await this.getStatsFromName(playerName, GameMode.vs3);
 			if (playerStat){
 				this.playerStats[i] = playerStat;
 			}
@@ -43,8 +45,7 @@ export class HomeComponent implements OnInit {
 		console.log(this.playerStats);
 	}
 
-	// main function to trigger all logic
-	async getStatsFromScreenshotForOne(playerNumber: number, fakeInput: boolean, enhanceImage: boolean): Promise<PlayerStats> {
+	async getPlayerNameFromScreenshot(playerNumber: number, fakeInput: boolean, enhanceImage: boolean): Promise<string> {
 		let buffer = null;
 		if (fakeInput){
 			buffer = await this.getBufferFromLocalFile();
@@ -57,16 +58,27 @@ export class HomeComponent implements OnInit {
 			cropped = await this.improveImage(cropped);
 		}
 		// await this.savePicture(cropped, playerNumber);
-		const playerName = await this.recognizeTextFromBuffer(cropped);
-		let stats = await this.getPlayerStatsFromApi(playerName, '3v3');
-		if (stats && stats.count && stats.count === 1){
-			return stats.items[0];
-		}
-		stats = await this.getPlayerStatsFromApi(playerName, '2v2');
+		return await this.recognizeTextFromBuffer(cropped);
+	}
+
+	async getStatsFromName(playerName: string, preferredGameMode: GameMode): Promise<PlayerStats>{
+		let stats = await this.getPlayerStatsFromApi(playerName, preferredGameMode);
 		if (stats && stats.count && stats.count === 1) {
 			return stats.items[0];
 		}
-		stats = await this.getPlayerStatsFromApi(playerName, '1v1');
+		stats = await this.getPlayerStatsFromApi(playerName, GameMode.vs3);
+		if (stats && stats.count && stats.count === 1) {
+			return stats.items[0];
+		}
+		stats = await this.getPlayerStatsFromApi(playerName, GameMode.vs2);
+		if (stats && stats.count && stats.count === 1) {
+			return stats.items[0];
+		}
+		stats = await this.getPlayerStatsFromApi(playerName, GameMode.vs1);
+		if (stats && stats.count && stats.count === 1) {
+			return stats.items[0];
+		}
+		stats = await this.getPlayerStatsFromApi(playerName, GameMode.vs4);
 		if (stats && stats.count && stats.count === 1) {
 			return stats.items[0];
 		}
@@ -96,13 +108,13 @@ export class HomeComponent implements OnInit {
 	}
 
 	async getBufferFromLocalFile(): Promise<Buffer> {
-		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/test.png');
+		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/2v2.png');
 		return Buffer.from(result);
 	}
 
 	async recognizeTextFromBuffer(picture: Buffer): Promise<string> {
 		const text = await Tesseract.recognize(picture, 'eng');
-		console.log(`Recognized text:`);
+		console.log(`Recognized player:`);
 		console.log(text.data.text);
 		return text.data.text;
 	}
