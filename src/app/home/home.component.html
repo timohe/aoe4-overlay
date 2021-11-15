@@ -1,11 +1,16 @@
 <div class="container">
-	<p id="close" (click)="closeApp()">&#10006;</p>
-	<h1>Player info</h1>
-	<div *ngFor="let stat of playerStats">
-		<p *ngIf="stat">
-			{{stat?.userName}} | Elo: {{stat?.elo}} | Winrate: {{stat?.winPercent}}%
-		</p>
-	</div>
-	<button  (click)="toggleFakeInput()">Fake Input: {{fakeInput}}</button>
-	<button [disabled]="calcInProgress" (click)="getStatsForAll()">Start</button>
+	
+	<tr *ngFor="let stat of playerStats">
+		<td *ngIf="stat">
+			{{stat?.elo}}
+		</td>
+		<td *ngIf="stat">
+			{{stat?.winPercent | number: '1.0-0'}}%
+		</td>
+	</tr>
+
+	<button class="button" [disabled]="calcInProgress" (click)="getStatsForAll()">Start</button>
+	<!-- <button class="button" (click)="toggleFakeInput()">Fake Input: {{fakeInput}}</button> -->
+	<button class="button"(click)="closeApp()">Close</button>
+	<!-- <p id="close" (click)="closeApp()">&#10006;</p> -->
 </div>
