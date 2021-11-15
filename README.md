@@ -6,11 +6,12 @@ Overlay for Age of Empires 4
 - Shows the result in the loading screen
 
 # Todos
-* Change Icons
-* Shortcut to show/hide
-* Recognize and show map
-* app.on('ready', () => setTimeout(createWindow, 400)); can prob be reduced
+* Start button loading animation
 * Test with full-hd
+* Test with 8 players
+* Nicer splashscreen
+* app.on('ready', () => setTimeout(createWindow, 400)); can prob be reduced
+* Once minimaps are available somewhere: Recognize and show map
 
 ## Main Dependencies
 * Angular

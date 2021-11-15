@@ -175,7 +175,9 @@ export class HomeComponent implements OnInit {
 
 	closeApp() {
 		const win = remote.getCurrentWindow();
-		win.close();
+		win.minimize();
+		this.playerStats = [];
+		// win.close();
 	}
 
 	toggleFakeInput() {
