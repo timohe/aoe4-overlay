@@ -124,7 +124,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	async getBufferFromLocalFile(): Promise<Buffer> {
-		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/2v2.png');
+		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/3v3.png');
 		return Buffer.from(result);
 	}
 

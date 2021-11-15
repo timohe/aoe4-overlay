@@ -20,26 +20,27 @@ function createWindow(): BrowserWindow {
 
 	// Create the browser window.
 	win = new BrowserWindow({
-		icon: path.join(__dirname, iconPath),
-		x: size.width - 400,
-		y: 0,
+		// icon: path.join(__dirname, iconPath),
+		x: 520,
+		y: 287,
 		// width: 400,
 		// height: 400,
 		// minHeight: 400,
 		// maxHeight: 400,
-		// minWidth: 400,
-		// maxWidth: 400,
+		// minWidth: 200,
+		maxWidth: 300,
+		transparent: true,
+		alwaysOnTop: true,
+		// it will not be transparent if there is a frame
 		frame: false,
 		autoHideMenuBar: true,
-		backgroundColor: '#191c29',
 		webPreferences: {
 			nodeIntegration: true,
 			allowRunningInsecureContent: (serve) ? true : false,
 			contextIsolation: false,  // false if you want to run e2e test with Spectron
 			enableRemoteModule: true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
 		},
-		// transparent: true,
-		alwaysOnTop: true
+		
 	});
 
 

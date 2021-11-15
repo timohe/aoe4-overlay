@@ -1,14 +1,16 @@
 .container {
     height: 100%;
-    margin-left: 2em;
+    margin-left: 0;
+    max-width: 300;
     // display: flex;
     // flex-direction: column;
     // align-items: center;
     // justify-content: center;
-    // -webkit-background-size: cover;
-    // /* pour anciens Chrome et Safari */
-    // background-size: cover;
-    // /* version standardisée */
+    -webkit-background-size: cover;
+    /* pour anciens Chrome et Safari */
+    background-size: cover;
+    /* version standardisée */
+    background-color: transparent;
 }
 
 h1 {
@@ -30,12 +32,21 @@ p {
     color: #e2e2e2;
 }
 
-.background {
-    background-color: rgb(25, 28, 41)
+td {
+    padding-right: 30px;
+    padding-bottom: 45px;
+    margin-top: 0;
+    margin-bottom: 43px;
+    font-size: 30px;
+    font-family: "maiola", serif;
+    color: #ffdb88;
+    font-weight: 400;
 }
 
 #close {
-    font-size: 1em;
+    margin-top: 0;
+    padding-top: 0;
+    font-size: 1.5em;
     color: rgb(255, 218, 123);
     float: right;
     // padding-top: 10px;
@@ -44,4 +55,25 @@ p {
 
 #close:hover {
     color: #e2e2e2;
+}
+
+.button {
+    color: #ffdb88;
+    font-weight: 400;
+    background-color: #121520;
+    font-family: "maiola", serif;
+    border: none;
+    // color: #c4c4c4;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 22px;
+    margin: 0px 0px;
+    cursor: pointer;
+}
+
+button:disabled,
+button[disabled] {
+    background-color: #535353;
 }

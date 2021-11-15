@@ -7,10 +7,10 @@ Overlay for Age of Empires 4
 
 # Todos
 * Change Icons
-* Put data alongside names
 * Shortcut to show/hide
 * Recognize and show map
 * app.on('ready', () => setTimeout(createWindow, 400)); can prob be reduced
+* Test with full-hd
 
 ## Main Dependencies
 * Angular
