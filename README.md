@@ -22,7 +22,8 @@ Overlay for Age of Empires 4
 ## Notes
 * Built based on https://github.com/maximegris/angular-electron.git
 
-*Install NodeJS dependencies with npm (used by Electron main process):*
+
+# Install NodeJS dependencies with npm (used by Electron main process)
 
 ``` bash
 cd app/
