@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 	nameHeight = 50;
 	playerStats: Array<PlayerStats> = [];
 	calcInProgress = false;
-	fakeInput = true;
+	fakeInput = false;
 	scaleFactor = 1;
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
@@ -219,16 +219,17 @@ export class HomeComponent implements OnInit {
 	}
 	styleTd(){
 		const paddingRight = `${30 * this.scaleFactor}px`;
-		const paddingBottom = `${46 * this.scaleFactor}px`;
+		const lineHeight = `${80 * this.scaleFactor}px`;
 		const fontSize = `${30 * this.scaleFactor}px`;
 		return {
 			'padding-right': paddingRight,
-			'padding-bottom': paddingBottom,
 			'font-size': fontSize,
+			// 'padding-bottom': paddingBottom,
 			'margin-top': '0',
 			'font-family': '"maiola", serif',
 			'font-weight': '400',
-			color: '#ffdb88'
+			color: '#ffdb88',
+			height: lineHeight
 		};
 	}
 }
