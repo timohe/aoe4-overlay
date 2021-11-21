@@ -10,12 +10,12 @@ export interface PlayerStats {
 	userName: string;
 	avatarUrl: string;
 	playerNumber: string;
-	elo: number;
+	elo: any;
 	eloRating: number;
 	rank: number;
 	region: number;
 	wins: number;
-	winPercent: number;
+	winPercent: any;
 	losses: number;
 	winStreak: number;
 }

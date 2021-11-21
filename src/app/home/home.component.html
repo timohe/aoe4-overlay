@@ -6,7 +6,7 @@
 		<td [ngStyle]="styleTd()" *ngIf="stat">
 			{{stat?.elo}}
 		</td>
-		<td [ngStyle]="styleTd()" *ngIf="stat">
+		<td *ngIf="stat && stat?.elo !==''" [ngStyle]="styleTd()">
 			{{stat?.winPercent | number: '1.0-0'}}%
 		</td>
 	</tr>

@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 	nameHeight = 50;
 	playerStats: Array<PlayerStats> = [];
 	calcInProgress = false;
-	fakeInput = false;
+	fakeInput = true;
 	scaleFactor = 1;
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit {
 		if (enhanceImage){
 			cropped = await this.improveImage(cropped);
 		}
-		await this.savePicture(cropped, playerNumber);
+		// await this.savePicture(cropped, playerNumber);
 		return await this.recognizeTextFromBuffer(cropped);
 	}
 
@@ -203,12 +203,12 @@ export class HomeComponent implements OnInit {
 				userName: 'not found',
 				avatarUrl: 'not found',
 				playerNumber: 'not found',
-				elo: 0,
+				elo: '',
 				eloRating: 0,
 				rank: 0,
 				region: 0,
 				wins: 0,
-				winPercent: 0,
+				winPercent: '',
 				losses: 0,
 				winStreak: 0,
 			};
