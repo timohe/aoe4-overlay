@@ -13,5 +13,8 @@
 		"@electron/remote": "1.2.0",
 		"fs": "^0.0.1-security",
 		"sharp": "^0.29.2"
+	},
+	"build": {
+		"artifactName": "AoE4-Overlay.${ext}"
 	}
 }
