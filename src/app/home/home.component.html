@@ -3,10 +3,10 @@
 <div class="container">
 	
 	<tr *ngFor="let stat of playerStats">
-		<td *ngIf="stat">
+		<td [ngStyle]="styleTd()" *ngIf="stat">
 			{{stat?.elo}}
 		</td>
-		<td *ngIf="stat">
+		<td [ngStyle]="styleTd()" *ngIf="stat">
 			{{stat?.winPercent | number: '1.0-0'}}%
 		</td>
 	</tr>

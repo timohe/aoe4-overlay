@@ -2,10 +2,6 @@
     height: 100%;
     margin-left: 0;
     max-width: 300;
-    // display: flex;
-    // flex-direction: column;
-    // align-items: center;
-    // justify-content: center;
     -webkit-background-size: cover;
     /* pour anciens Chrome et Safari */
     background-size: cover;
@@ -32,30 +28,6 @@ p {
     color: #e2e2e2;
 }
 
-td {
-    padding-right: 30px;
-    padding-bottom: 46px;
-    margin-top: 0;
-    font-size: 30px;
-    font-family: "maiola", serif;
-    color: #ffdb88;
-    font-weight: 400;
-}
-
-#close {
-    margin-top: 0;
-    padding-top: 0;
-    font-size: 1.5em;
-    color: rgb(255, 218, 123);
-    float: right;
-    // padding-top: 10px;
-    padding-right: 20px;
-}
-
-#close:hover {
-    color: #e2e2e2;
-}
-
 .button {
     color: #ffdb88;
     font-weight: 400;
@@ -67,7 +39,7 @@ td {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 22px;
+    font-size: 1em;
     margin: 0px 0px;
     cursor: pointer;
 }

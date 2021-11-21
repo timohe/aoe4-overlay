@@ -14,21 +14,34 @@ const iconPath = process.platform !== 'darwin'
 	: 'src/assets/icons/favicon.icns';
 
 function createWindow(): BrowserWindow {
-
 	const electronScreen = screen;
 	const size = electronScreen.getPrimaryDisplay().workAreaSize;
+	let scaleFactor = size.width / 2560
+
+	let xOffset = 520;
+	let yOffset = 287;
+	let dispHeight = 900;
+	let dispMinHeight = 900;
+	let dispMaxWidth = 300;
+
+	xOffset = Math.round(xOffset * scaleFactor);
+	yOffset = Math.round(yOffset * scaleFactor);
+	dispHeight = Math.round(dispHeight * scaleFactor);
+	dispMinHeight = Math.round(dispMinHeight * scaleFactor);
+	dispMaxWidth = Math.round(dispMaxWidth * scaleFactor);
+	
 
 	// Create the browser window.
 	win = new BrowserWindow({
 		// icon: path.join(__dirname, iconPath),
-		x: 520,
-		y: 287,
+		x: xOffset,
+		y: yOffset,
 		// width: 400,
-		height: 900,
-		minHeight: 900,
+		height: dispHeight,
+		minHeight: dispMinHeight,
 		// maxHeight: 400,
 		// minWidth: 200,
-		maxWidth: 300,
+		maxWidth: dispMaxWidth,
 		transparent: true,
 		alwaysOnTop: true,
 		// it will not be transparent if there is a frame
@@ -38,9 +51,9 @@ function createWindow(): BrowserWindow {
 			nodeIntegration: true,
 			allowRunningInsecureContent: (serve) ? true : false,
 			contextIsolation: false,  // false if you want to run e2e test with Spectron
-			enableRemoteModule: true // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+			enableRemoteModule: true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
+			devTools: true
 		},
-		
 	});
 
 

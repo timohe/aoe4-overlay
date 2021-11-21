@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { electron } from 'process';
 import Tesseract from 'tesseract.js';
-import { desktopCapturer, screen } from 'electron';
+import { desktopCapturer, remote } from 'electron';
 import { ElectronService } from '../core/services/index';
-import { remote } from 'electron';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
@@ -24,14 +23,25 @@ export class HomeComponent implements OnInit {
 	playerStats: Array<PlayerStats> = [];
 	calcInProgress = false;
 	fakeInput = false;
+	scaleFactor = 1;
 
 	constructor(private httpClient: HttpClient, private native: ElectronService) {
 	}
 	ngOnInit(): void {
 	}
 
+	setDisplayScaling(){
+		this.scaleFactor = screen.width / 2560;
+		this.nameXOffset = Math.round(168 * this.scaleFactor);
+		// eslint-disable-next-line max-len
+		this.nameYOffset = [Math.round(288 * this.scaleFactor), Math.round(365 * this.scaleFactor), Math.round(444 * this.scaleFactor), Math.round(527 * this.scaleFactor), Math.round(602 * this.scaleFactor), Math.round(685 * this.scaleFactor), Math.round(765 * this.scaleFactor), Math.round(845 * this.scaleFactor)];
+		this.nameWidth = Math.round(400 * this.scaleFactor);
+		this.nameHeight = Math.round(50 * this.scaleFactor);
+	}
+
 	// main function to trigger all logic
 	async getStatsForAll(){
+		this.setDisplayScaling();
 		const playerNames = [];
 		this.playerStats = [];
 		this.calcInProgress = true;
@@ -73,7 +83,7 @@ export class HomeComponent implements OnInit {
 		if (enhanceImage){
 			cropped = await this.improveImage(cropped);
 		}
-		// await this.savePicture(cropped, playerNumber);
+		await this.savePicture(cropped, playerNumber);
 		return await this.recognizeTextFromBuffer(cropped);
 	}
 
@@ -124,7 +134,7 @@ export class HomeComponent implements OnInit {
 	}
 
 	async getBufferFromLocalFile(): Promise<Buffer> {
-		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/3v3.png');
+		const result = await this.native.fs.promises.readFile('./src/assets/test-screenshot/1080p.png');
 		return Buffer.from(result);
 	}
 
@@ -149,8 +159,8 @@ export class HomeComponent implements OnInit {
 	async getScreenshot(): Promise<Buffer> {
 		const sources = await desktopCapturer.getSources({
 			types: ['screen'], thumbnailSize: {
-				width: 2560,
-				height: 1440,
+				width: 2560*this.scaleFactor,
+				height: 1440*this.scaleFactor,
 			}
 		});
 		const screenshot = sources[0].thumbnail.toPNG();
@@ -206,5 +216,19 @@ export class HomeComponent implements OnInit {
 		else {
 			return stat;
 		}
+	}
+	styleTd(){
+		const paddingRight = `${30 * this.scaleFactor}px`;
+		const paddingBottom = `${46 * this.scaleFactor}px`;
+		const fontSize = `${30 * this.scaleFactor}px`;
+		return {
+			'padding-right': paddingRight,
+			'padding-bottom': paddingBottom,
+			'font-size': fontSize,
+			'margin-top': '0',
+			'font-family': '"maiola", serif',
+			'font-weight': '400',
+			color: '#ffdb88'
+		};
 	}
 }
