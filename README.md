@@ -2,8 +2,10 @@
 
 If you are curious about the ELO of people you play against, this is the app for you.
 
-- Recognizes player names on the quickmacht waiting screen 
+- Recognizes player names on the quickmatch waiting screen 
 - Shows the result in an overlay beside the players names
+
+The app is completely separate of the game and uses text recognition. It will not affect or change any game files.
 
 ## Installation
 * 
